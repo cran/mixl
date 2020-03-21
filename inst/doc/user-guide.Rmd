@@ -30,9 +30,9 @@ On Mac, things are a little more complicated. OSX has a compiler pre-installed. 
 
 * Install [homebrew](https://brew.sh/)
 * In the terminal, run the following commands 
-```{bash, eval = FALSE}
+``` 
 brew install gcc@9 
-mkdir ~/.R
+mkdir -p ~/.R
 curl -L -o ~/.R/Makevars https://git.io/Je22d
 ```
 * 
@@ -65,9 +65,7 @@ To both simplify the transformation of the utility functions into C++ code and a
 * Intermediate variables that are calculated don’t get prefixed by anything
 * The utility functions are prefixed by U_. “U_bus” or “U_4” are valid, but U_geer.erg is not.
 * Draws are prefixed by “draw”. If you pass nDraws into the estimate function, a suitable set of halton draws will be generated automatically. If you pass in a draws matrix, it needs to be large enough. there is a helper function to do this: 
-```{r, eval = FALSE}
-mixl::create_halton_draws(Nindividuals, Ndraws, draw_dimensions)
-```
+``` mixl::create_halton_draws(Nindividuals, Ndraws, draw_dimensions) ```
 
 * For powers, you need to use pow (x,y) instead of x^y
 
@@ -76,14 +74,14 @@ The availabilities must to be provided as a matrix of $n*k$ where $n$ is the num
 
 ## The mixl input file
 Below are two sample model definitions to get you started. The package automatically detects mixing, and generates the loglikelihood function appropriately. A simple mnl model, using the Train dataset could look like the following:
-```{r, eval = FALSE}
+```
 U_A =          @B_price * $price_A / 1000 + @B_timeA * $time_A / 60 + @B_change * $change_A; 
 U_B = @ASC_B + @B_price * $price_B / 1000 + @B_timeB * $time_B / 60;
 ```
 Here, the coefficients ASC_B, B_price, B_time, B_timeB and B_change would be estimated. 
 
 If we extend this to a simple mixed model, the additional random coefficients SIGMA_B and SIGMA_B2 are estimated. the declaration of ASC_B_RND helps the readability of the utility function:
-```{r, eval = FALSE}
+```
 ASC_B_RND = @ASC_B + draw_1 * @SIGMA_B  + draw_2 * @SIGMA_B2;
 
 U_A =             @B_price * $price_A / 1000 + @B_timeA * $time_A / 60 + @B_change * $change_A; 
@@ -95,11 +93,11 @@ As clean as this interface is, there are some limits to what the package can han
 
 * ID is the id of the individual, NOT the choice, and needs to be congurent from $1..n$ where n is the number of individuals. 
 * For each row in the data, CHOICE must be an integer from $1..k$, where k is the number of available alternatives. 
-* A utility function must be specified for each alternative. If none is required, `U_x = 1` will give a utility of zero.
+* A utility function must be specified for each alternative. If none is required, ```U_x = 1``` will give a utility of zero.
 * The availabilities need to be a numeric matrix of 1 or 0s, with the number of rows equal to number of data rows, and the number of columns equal to the number of alternatives.
 
 #M maximum simulated  likelihood estimation
-A set choice model generated through this package is estimated using the `maximumLikelihood` function. It wraps the maxLik procedure from the maxLik package, which then accepts the optimised likelihood function generated from a utility script. The maxLik package is stable and well tested. To improve the covariance estimates, the Hessian function from the numDeriv package, rather than the default from the maxLik package is used. The BFGS (Broyden–Fletcher–Goldfarb–Shanno algorithm) method is used by deafault. This has found to converge faster and more reliably than other methods such as Newton-Rhapson.
+A set choice model generated through this package is estimated using the ```maximumLikelihood``` function. It wraps the maxLik procedure from the maxLik package, which then accepts the optimised likelihood function generated from a utility script. The maxLik package is stable and well tested. To improve the covariance estimates, the Hessian function from the numDeriv package, rather than the default from the maxLik package is used. The BFGS (Broyden–Fletcher–Goldfarb–Shanno algorithm) method is used by deafault. This has found to converge faster and more reliably than other methods such as Newton-Rhapson.
 
 Even for simple MNL models, the numerical gradient of the loglikelihood function is used, as it is envisaged that this package will primarily be used for estimating mixed models, where simulation is necessary due to the use of random draws. 
 
@@ -121,27 +119,23 @@ Parallelisation is provided through the [openMP](https://www.openmp.org/). Where
 Probit models are currently not supported, though that is planned for the near future.
 
 ## Hybrid Choice
-The package also supports hybrid choice models. Declared variables with the prefix `P_indic_` will be considered as probability indicators for each observation. The compiler detects these automatically, and automatically includes  the code to include the product of the probability indicators in the loglikelihood. The model estimation will return both the choice loglikelihood and the model loglikelihood. In psuedo code, the inclusion of the indicators looks like this: 
+The package also supports hybrid choice models. Declared variables with the prefix ```P_indic_``` will be considered as probability indicators for each observation. The compiler detects these automatically, and automatically includes  the code to include the product of the probability indicators in the loglikelihood. The model estimation will return both the choice loglikelihood and the model loglikelihood. In psuedo code, the inclusion of the indicators looks like this: 
 
-```{r, eval = FALSE}
+```
 p_choice = log(chosen_utility / sum(utilities) );
 p_indic_total = P_indic_1 * P_indic_2 * .... P_indic_k;
 
 p_choice = p_choice + (1/num_obs)*log(p_indic_total);
 ```
-One extra column is required in the dataset to enable hybrid choice, namely a `count` column with the total number of observations for the individual making the choice.
+One extra column is required in the dataset to enable hybrid choice, namely a ```count``` column with the total number of observations for the individual making the choice.
 
 ### Using probability distributions
-To give maximum flexibility to the user, there are no restrictions on which probability distributions can be used in the probability indicators. In R, it is common to use functions such as `rnorm` or `dnorm` from the stats package. These can still be used, but the syntax is a little different, as they must be called from the C++ code. hence, where in R one would call the following 
+To give maximum flexibility to the user, there are no restrictions on which probability distributions can be used in the probability indicators. In R, it is common to use functions such as ```rnorm``` or ```dnorm``` from the stats package. These can still be used, but the syntax is a little different, as they must be called from the C++ code. hence, where in R one would call the following 
 
-```{r, eval = FALSE}
-dnorm(x, mean, sd)
-```
+```dnorm(x, mean, sd)```
 
 in the utility script, one must write
 
-```{r, eval = FALSE}
-R::dnorm(x, mean, sd, 0);
-```
+```R::dnorm(x, mean, sd, 0);```
 
 For a list of distributions which can be used, please refer to the [Rcpp documentation](http://dirk.eddelbuettel.com/code/rcpp/html/namespaceR.html)

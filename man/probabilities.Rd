@@ -2,11 +2,17 @@
 % Please edit documentation in R/probabilities.R
 \name{probabilities}
 \alias{probabilities}
-\title{Calculate the probabilities for a specified and estimated model. 
+\title{Calculate the probabilities for a specified and estimated model.
 Note that if new data or draws are provided, the model will not be re-estimated}
 \usage{
-probabilities(model, data = NULL, availabilities = NULL,
-  draws = NULL, nDraws = NULL, num_threads = 1)
+probabilities(
+  model,
+  data = NULL,
+  availabilities = NULL,
+  draws = NULL,
+  nDraws = NULL,
+  num_threads = 1
+)
 }
 \arguments{
 \item{model}{The estimated Model}
@@ -25,7 +31,7 @@ probabilities(model, data = NULL, availabilities = NULL,
 Dataframe of individual-level posteriors
 }
 \description{
-Calculate the probabilities for a specified and estimated model. 
+Calculate the probabilities for a specified and estimated model.
 Note that if new data or draws are provided, the model will not be re-estimated
 }
 \examples{
@@ -39,7 +45,7 @@ Note that if new data or draws are provided, the model will not be re-estimated
 	U_B = @asc + @B_price * $price_B / 1000 + @B_timeB * $time_B / 60;
 	"
 
-	model_spec <- mixl::specify_model(mnl_test, Train)
+	model_spec <- mixl::specify_model(mnl_test, Train, disable_multicore=T)
 
 	#only take starting values that are needed
 	est <- stats::setNames(c(1, 1,1,1), c("asc", "B_price", "B_time", "B_timeB"))

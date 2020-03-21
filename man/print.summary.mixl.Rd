@@ -12,7 +12,7 @@
 \item{...}{Options to pass to print.}
 }
 \description{
-\code{summary} is an S3 method for the summary.mixl class, the output of a model plus goodness of fit metrics
+\code{\link[=print]{print()}} is an S3 method for the summary.mixl class, the output of a model plus goodness of fit metrics
 }
 \examples{
 \donttest{
@@ -25,7 +25,7 @@
 	U_B = @asc + @B_price * $price_B / 1000 + @B_timeB * $time_B / 60;
 	"
 
-	model_spec <- mixl::specify_model(mnl_test, Train)
+	model_spec <- mixl::specify_model(mnl_test, Train, disable_multicore=T)
 
 	#only take starting values that are needed
 	est <- stats::setNames(c(1, 1,1,1), c("asc", "B_price", "B_time", "B_timeB"))

@@ -32,13 +32,16 @@ test_that("Simple posterior calcualtion", {
       U_B = ASC_B_RND + @B_price * $price_B / 1000 + @B_timeB * $time_B / 60;
     "
   
+  template_location <- system.file("include", "mixl", "cpp_posteriors.cpp", package = "mixl")
+  #template_location <- "inst/include/mixl/cpp_posteriors.cpp"
+  
   #only take starting values that are needed
   est <- stats::setNames(c(-1059.69729,  -181.27796,  -251.78909,  -241.18878,   -86.77386,  -173.09451,   291.02618,   142.71793,   332.60909)
                   , c("B_price", "B_time", "B_timeB", "B_change", "ASC_A", "ASC_B", "SIGMA_A1", "SIGMA_A2", "SIGMA_B"))
   
   availabilities <- mixl::generate_default_availabilities(Train, 2)
   
-  logLik_env <- mixl::specify_model(mnl_test, Train, compile=TRUE)
+  logLik_env <- mixl::specify_model(mnl_test, Train, compile=TRUE, disable_multicore=T)
   model <- mixl::estimate(logLik_env, est, Train, availabilities = availabilities, nDraws = 20)
   
   cpp_post <- mixl::posteriors(model)
@@ -81,13 +84,16 @@ test_that("Advanced posterior calcualtion with individual variables", {
   U_B = ASC_B_RND + price_RND + @B_timeB * $time_B / 60;
   "
   
+  template_location <- system.file("include", "mixl", "cpp_posteriors.cpp", package = "mixl")
+  #template_location <- "inst/include/mixl/cpp_posteriors.cpp"
+  
   #only take starting values that are needed
   est <- stats::setNames(c(-1059.69729,  -181.27796,  -251.78909,  -241.18878,   -86.77386,  -173.09451,   291.02618,   142.71793,   332.60909, 1)
                   , c("B_price", "B_time", "B_timeB", "B_change", "ASC_A", "ASC_B", "SIGMA_A1", "SIGMA_A2", "SIGMA_B", "SIGMA_PRICE"))
   
   availabilities <- mixl::generate_default_availabilities(Train, 2)
   
-  logLik_env <- mixl::specify_model(mnl_test, Train, compile=TRUE)
+  logLik_env <- mixl::specify_model(mnl_test, Train, compile=TRUE, disable_multicore=T)
   model <- mixl::estimate(logLik_env, est, Train, availabilities = availabilities, nDraws = 20)
   
   cpp_post <- mixl::posteriors(model)
@@ -140,14 +146,17 @@ test_that("Posteriors without draws calcualtion for simple MNL", {
   U_A = ASC_A_RND + PRICE_RND + @B_time * $time_A / 60 + @B_change * $change_A; 
   U_B = @B_price * $price_B / 1000 + @B_timeB * $time_B / 60;
   "
-
+  
+  template_location <- system.file("include", "mixl", "cpp_mnl_posteriors.cpp", package = "mixl")
+  #template_location <- "inst/include/mixl/cpp_posteriors.cpp"
+  
   #only take starting values that are needed
   est <- stats::setNames(c(-0.1729610, -0.2057692, -0.1250778, -0.0649737, -0.1804503, 0.1)
                   , c("B_price", "B_time", "B_timeB", "B_change", "ASC_A", "LAMDBA_DIST_COST"))
   
   availabilities <- mixl::generate_default_availabilities(Train, 2)
   
-  logLik_env <- mixl::specify_model(mnl_test, Train, compile=TRUE)
+  logLik_env <- mixl::specify_model(mnl_test, Train, compile=TRUE, disable_multicore=T)
   model <- mixl::estimate(logLik_env, est, Train, availabilities = availabilities, nDraws = 0)
   model <- mixl::estimate(logLik_env, est, Train, availabilities = availabilities)
   model <- mixl::estimate(logLik_env, est, Train, availabilities = availabilities, nDraws = 20) #if nDraws parameter is left in

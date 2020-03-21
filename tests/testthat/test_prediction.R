@@ -15,8 +15,9 @@ test_that("The prediction code compiles and runs", {
   U_A =             @B_price * $price_A / 1000 + @B_time * $time_A / 60 + @B_change * $change_A; 
   U_B = ASC_B_RND + @B_price * $price_B / 1000 + @B_timeB * $time_B / 60 ;
   "
-
-  logLik_env <- mixl::specify_model(mnl_test, Train, compile=TRUE)
+#  Sys.setenv("PKG_CPPFLAGS"= sprintf("-I\"%s\"", system.file(package = "mixl", "include")))
+  
+  logLik_env <- mixl::specify_model(mnl_test, Train, disable_multicore=T)
   
   #only take starting values that are needed
   est <- stats::setNames(c(-1.03970347, -0.80712567, -0.95341969, -0.14061543,  0.19796530, -0.01888506), 
@@ -56,7 +57,7 @@ U_B = @B_price * $price_B / 1000 + @B_timeB * $time_B / 60;
   
   availabilities <- mixl::generate_default_availabilities(Train, 2)
   
-  logLik_env <- mixl::specify_model(mnl_test, Train, compile=TRUE)
+  logLik_env <- mixl::specify_model(mnl_test, Train, disable_multicore=T)
   
   model <- mixl::estimate(logLik_env, est, Train, availabilities = availabilities)
   model_preds <- mixl::probabilities(model, num_threads=1)
@@ -84,7 +85,7 @@ test_that("Different data can be used in mixed mnl", {
   "
   #  Sys.setenv("PKG_CPPFLAGS"= sprintf("-I\"%s\"", system.file(package = "mixl", "include")))
   
-  logLik_env <- mixl::specify_model(mnl_test, Train, compile=TRUE)
+  logLik_env <- mixl::specify_model(mnl_test, Train, disable_multicore=T)
   
   #only take starting values that are needed
   est <- stats::setNames(c(-1.03970347, -0.80712567, -0.95341969, -0.14061543,  0.19796530, -0.01888506), 

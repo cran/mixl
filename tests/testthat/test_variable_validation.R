@@ -4,6 +4,10 @@ data_names <- c("tt_w_rp", "tt_b_rp")
 beta_names <- c("B_COST", "SIGMA_SCALE", "ASC_C", "SIGMA_C", "ASC_CS",  "SIGMA_CS")
 
 
+
+
+
+
 test_that("perfect input", {
   
   e1 <- new.env()

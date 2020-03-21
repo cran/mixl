@@ -79,10 +79,16 @@ summary_tex=function(model_summary) {
                          
   )
   
+  
+  runlabel <- paste0(m$model_name,"_", format(Sys.time(), "%Y%m%d_%H%M%S_"))
+  
+  save(texmod, file=paste0(runlabel, "texmod.RData"))
+  
+  
   tab1 <- texreg::texreg(texmod, stars = c(0.01,0.05,0.1),
                  caption = m$model_name, fontsize = "footnotesize",
                  booktabs = T)
-  tab1
+  print(tab1)
   
 }
 
