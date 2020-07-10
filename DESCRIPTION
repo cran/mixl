@@ -2,8 +2,8 @@ Type: Package
 Package: mixl
 Title: Simulated Maximum Likelihood Estimation of Mixed Logit Models
         for Large Datasets
-Version: 1.1.2
-Date: 2020-03-20
+Version: 1.2.0
+Date: 2020-07-10
 Authors@R: 
     person(given = "Joseph",
            family = "Molloy",
@@ -20,10 +20,10 @@ Imports: maxLik, numDeriv, randtoolbox, Rcpp (>= 0.12.19), readr,
 Suggests: knitr, mlogit, rmarkdown, testthat, texreg, xtable
 VignetteBuilder: knitr
 Encoding: UTF-8
-RoxygenNote: 7.1.0
-NeedsCompilation: no
-Packaged: 2020-03-21 10:08:00 UTC; joemolloy
+RoxygenNote: 7.1.1
+NeedsCompilation: yes
+Packaged: 2020-07-10 15:38:07 UTC; molloyj
 Author: Joseph Molloy [aut, cre]
 Maintainer: Joseph Molloy <joseph.molloy@ivt.baug.ethz.ch>
 Repository: CRAN
-Date/Publication: 2020-03-21 16:30:02 UTC
+Date/Publication: 2020-07-10 16:00:03 UTC

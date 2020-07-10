@@ -12,10 +12,26 @@
 
 <meta name="author" content="Joe Molloy" />
 
-<meta name="date" content="2020-03-21" />
+<meta name="date" content="2020-07-10" />
 
 <title>Mixl User Guide</title>
 
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
 
 
 
@@ -215,7 +231,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Mixl User Guide</h1>
 <h4 class="author">Joe Molloy</h4>
-<h4 class="date">2020-03-21</h4>
+<h4 class="date">2020-07-10</h4>
 
 
 
@@ -225,7 +241,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>##Installation Under the hood, the <em>mixl</em> package compiles a loglikelihood function based on your model specification. This requires a c++ compiler. Somewhat complicatedly, the correct compiler (for C++ with openMP support) is only available by defauly on linux machines. On windows and OSX machines, <em>mixl</em> will installed successfully, but attempts to specify a model will fail unless the following steps are taken.</p>
 <div id="windows" class="section level3">
 <h3>Windows</h3>
-<p>On windows machines, the easiest way is to install Rtools, an official extension for R. As of writing, the Version 3.5 the most recent. It is available here: <a href="https://cran.r-project.org/bin/windows/Rtools/">https://cran.r-project.org/bin/windows/Rtools/</a>. Download and run the installer. The default location (<code>C:/Rtools</code>) is fine.</p>
+<p>On windows machines, the easiest way is to install Rtools, an official extension for R. As of writing, the Version 4.0 the most recent. It is available here: <a href="https://cran.r-project.org/bin/windows/Rtools/">https://cran.r-project.org/bin/windows/Rtools/</a>. Download and run the installer. The default location (<code>C:/Rtools</code>) is fine.</p>
 </div>
 <div id="osx-mac" class="section level3">
 <h3>OSX (Mac)</h3>
@@ -260,11 +276,11 @@ curl -L -o ~/.R/Makevars https://git.io/Je22d</code></pre>
 <h1>Defining a model</h1>
 <p>To both simplify the transformation of the utility functions into C++ code and aid the readability of the scripts, a small amount of syntax has been introduced:</p>
 <ul>
-<li>Variables from the dataset must be prefixed with a $,</li>
-<li>coefficients with a @</li>
-<li>Every line must end with a ;</li>
-<li>Intermediate variables that are calculated don’t get prefixed by anything</li>
-<li>The utility functions are prefixed by U_. “U_bus” or “U_4” are valid, but U_geer.erg is not.</li>
+<li><p>Variables from the dataset must be prefixed with a $,</p></li>
+<li><p>coefficients with a @</p></li>
+<li><p>Every line must end with a ;</p></li>
+<li><p>Intermediate variables that are calculated don’t get prefixed by anything</p></li>
+<li><p>The utility functions are prefixed by U_. “U_bus” or “U_4” are valid, but U_geer.erg is not.</p></li>
 <li><p>Draws are prefixed by “draw”. If you pass nDraws into the estimate function, a suitable set of halton draws will be generated automatically. If you pass in a draws matrix, it needs to be large enough. there is a helper function to do this: <code>mixl::create_halton_draws(Nindividuals, Ndraws, draw_dimensions)</code></p></li>
 <li><p>For powers, you need to use pow (x,y) instead of x^y</p></li>
 </ul>
