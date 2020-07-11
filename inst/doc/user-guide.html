@@ -12,26 +12,10 @@
 
 <meta name="author" content="Joe Molloy" />
 
-<meta name="date" content="2020-07-10" />
+<meta name="date" content="2020-07-11" />
 
 <title>Mixl User Guide</title>
 
-<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
-
-document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
-  }
-});
-</script>
 
 
 
@@ -231,7 +215,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Mixl User Guide</h1>
 <h4 class="author">Joe Molloy</h4>
-<h4 class="date">2020-07-10</h4>
+<h4 class="date">2020-07-11</h4>
 
 
 
@@ -276,11 +260,11 @@ curl -L -o ~/.R/Makevars https://git.io/Je22d</code></pre>
 <h1>Defining a model</h1>
 <p>To both simplify the transformation of the utility functions into C++ code and aid the readability of the scripts, a small amount of syntax has been introduced:</p>
 <ul>
-<li><p>Variables from the dataset must be prefixed with a $,</p></li>
-<li><p>coefficients with a @</p></li>
-<li><p>Every line must end with a ;</p></li>
-<li><p>Intermediate variables that are calculated don’t get prefixed by anything</p></li>
-<li><p>The utility functions are prefixed by U_. “U_bus” or “U_4” are valid, but U_geer.erg is not.</p></li>
+<li>Variables from the dataset must be prefixed with a $,</li>
+<li>coefficients with a @</li>
+<li>Every line must end with a ;</li>
+<li>Intermediate variables that are calculated don’t get prefixed by anything</li>
+<li>The utility functions are prefixed by U_. “U_bus” or “U_4” are valid, but U_geer.erg is not.</li>
 <li><p>Draws are prefixed by “draw”. If you pass nDraws into the estimate function, a suitable set of halton draws will be generated automatically. If you pass in a draws matrix, it needs to be large enough. there is a helper function to do this: <code>mixl::create_halton_draws(Nindividuals, Ndraws, draw_dimensions)</code></p></li>
 <li><p>For powers, you need to use pow (x,y) instead of x^y</p></li>
 </ul>
