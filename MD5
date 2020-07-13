@@ -1,4 +1,4 @@
-e8ea632060984d25f4ed3b70740db921 *DESCRIPTION
+d1b3d9d34a930efe55a070d9addda818 *DESCRIPTION
 102679a209026d79ce5c188c62109c2e *NAMESPACE
 d7f777378049f5218286a1d481ad3bd6 *R/compile_posterior.R
 4157ceb3a6c415bc5a96c8d256164fb0 *R/compiler.R
@@ -20,9 +20,9 @@ eceeaeaa862ee7ac68b0d173b74c45f5 *R/helper_functions.R
 0e5f19f7345f2fd3e84074f1cd4d007f *inst/MIXL_OPENMP_FLAG
 46750e778a5cdb4d65c347f8e43df623 *inst/doc/user-guide.R
 d4b376725bc0e1106b9bbca66c2ce5ff *inst/doc/user-guide.Rmd
-ed6ca5b46234c1a9702c874d8f096f27 *inst/doc/user-guide.html
+a964ea922658d700d55bd19447d99933 *inst/doc/user-guide.html
 4ebf77fd49b8aea56f4a6f032bad2914 *inst/include/MIXL_OPENMP_FLAG
-533e85801fbe21c8add8902d7b8fb537 *inst/include/MIXL_OPENMP_FLAG.in
+6bd738be3520219310de61a340872752 *inst/include/MIXL_OPENMP_FLAG.in
 916075cfe12eceacc62c3606ac024bc3 *inst/include/mixl/cpp_mixed_prediction_template.h
 5f5e79f252d067cd813b7aa4312bf3c9 *inst/include/mixl/cpp_mnl_posteriors.cpp
 a068345fa2e9e31037c71e615ecf76ac *inst/include/mixl/cpp_mnl_prediction_template.h
