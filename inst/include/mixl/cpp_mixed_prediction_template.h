@@ -1,5 +1,3 @@
-// [[Rcpp::plugins(cpp11)]]        
-
 #include <Rcpp.h>
 #ifdef _OPENMP
   #include <omp.h>

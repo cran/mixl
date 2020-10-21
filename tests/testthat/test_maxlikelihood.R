@@ -9,17 +9,17 @@ test_that("A basic MNL model converges and creates the output", {
 
     mnl_test <- "
     U_A = @B_price * $price_A / 1000 + @B_time * $time_A / 60 + @B_change * $change_A;
-    U_B = @B_price * $price_B / 1000 + @B_timeB * $time_B / 60;
+    U_B = @B_price * $price_B / 1000 + @B_timeB * $time_B / 60 ;
     "
 
-    logLik_env <- mixl::specify_model(mnl_test, Train, disable_multicore=T)
+    logLik_env <- mixl::specify_model(mnl_test, Train, rebuild=T)
 
     #only take starting values that are needed
     est <- stats::setNames(c(1,1,1,1), c("B_price", "B_time", "B_timeB", "B_change"))
 
     availabilities <- mixl::generate_default_availabilities(Train, logLik_env$num_utility_functions)
 
-    model <- mixl::estimate(logLik_env, est, Train, availabilities = availabilities, control=list(iterlim=4))
+    model <- mixl::estimate(logLik_env, est, Train, availabilities = availabilities, control=list(iterlim=4), num_threads = 4)
 
     expect_equal(model$code, 1) #iteration limit
     expect_equal(model$maximum, -2046.955200, tolerance=1e-3)

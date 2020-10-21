@@ -40,7 +40,7 @@
 estimate <- function (model_spec, start_values, data, availabilities,  
                            draws = NULL, nDraws = NULL, fixedparam = c(), num_threads=1, ...) {
   
-  
+  start_time = Sys.time()
   Nindividuals <- length(unique(data$ID))
 
   check_inputs(model_spec, start_values, data, availabilities, draws, fixedparam)
@@ -79,7 +79,10 @@ estimate <- function (model_spec, start_values, data, availabilities,
   
   mL <- maxLik::maxLik(ll2, start=start_values, fixed=fixedparam, method="BFGS",print.level=4, hess=hessian_function, ... )
   
+  runtime = Sys.time() - start_time
+  
   ### set up output
+  mL$runtime     <- runtime
   mL$is_mixed     <- is_mixed
   mL$Nindividuals <- Nindividuals
   mL$nDraws       <- nDraws

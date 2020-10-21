@@ -12,10 +12,48 @@
 
 <meta name="author" content="Joe Molloy" />
 
-<meta name="date" content="2020-07-13" />
+<meta name="date" content="2020-10-21" />
 
 <title>Mixl User Guide</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+      </style>
 
 
 
@@ -215,7 +253,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Mixl User Guide</h1>
 <h4 class="author">Joe Molloy</h4>
-<h4 class="date">2020-07-13</h4>
+<h4 class="date">2020-10-21</h4>
 
 
 
@@ -229,25 +267,25 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="osx-mac" class="section level3">
 <h3>OSX (Mac)</h3>
-<p>On Mac, things are a little more complicated. OSX has a compiler pre-installed. However, the compiler (clang) doesn’t come with openMP enabled. Hence, the <code>specify_model</code> function will fail. The easist way to install a suitable compiler is as follows. Note, these commands require using the Terminal (command line). This can be accessed from the search functionality in OSX, or directly in R Studio itself.</p>
+<p>On Mac, things are a little more complicated. OSX has a compiler pre-installed. However, the compiler (clang) doesn’t come with openMP enabled. Hence, the <code>specify_model</code> function will fail. The easist way to install a suitable compiler is as follows. Note, these commands require using the Terminal (command line). This can be accessed from the search functionality in OSX, or directly in R Studio itself. The following code assumes that you don’t have a Makevars for your R environment set up already.</p>
 <ul>
 <li>Install <a href="https://brew.sh/">homebrew</a></li>
 <li>In the terminal, run the following commands</li>
 </ul>
 <pre><code>brew install gcc@9 
 mkdir -p ~/.R
-curl -L -o ~/.R/Makevars https://git.io/Je22d</code></pre>
+curl -L -o ~/.R/Makevars https://git.io/JTRql</code></pre>
 <ul>
 <li></li>
 </ul>
 </div>
 <div id="motivation" class="section level2">
 <h2>Motivation</h2>
-<p>The development of this package was motivated by the need at the <a href="http://www.ivt.ethz.ch/">Institute for Transport Planning and Systems (IVT)</a> at ETH Zürich to estimate complicated mixed multinomial logit models of time use and travel behaviour. Other approaches, such as <a href="http://biogeme.epfl.ch/">biogeme</a> and other R implementations were found to be very memory intensive when a large number of random draws were needed.</p>
+<p>The development of this package was motivated by the need at the <a href="https://www.ivt.ethz.ch/">Institute for Transport Planning and Systems (IVT)</a> at ETH Zürich to estimate complicated mixed multinomial logit models of time use and travel behaviour. Other approaches, such as <a href="https://biogeme.epfl.ch/">biogeme</a> and other R implementations were found to be very memory intensive when a large number of random draws were needed.</p>
 <p>Additionally, we found that the learning curve for some implementations was very steep, and changes to model specifications involved understanding of the underlying code base, on top of random utility and choice modeling fundamentals.</p>
 <p>In R, until now there has been two approaches for specifying utility functions. The first, popularised by the mlogit package uses the R formula notation to allow succint yet expressive definition of a utility function. This approach falls short however, when the user wants to specify multiple utility functions, which is standard practice for more complicated models. This approach also doesn’t handle complicated mixed models well. The alternative involves specifying the utility functions as operations on datatable columns, which is much more flexible, but inefficient to run, and error prone to write.</p>
 <p>From a technical perspective, the utility functions can be seen as the ‘inner loop’ of the Maximum likelihood Estimation (mle) operation. If there are p parameters, then for every iteration of the mle the utility functions are calculated at least 2p+1 times. It follows that any attempt at high performance mnl estimation should focus here.</p>
-<p>This is where approaches in R fall short. The speedups possible by coding inner loops using C++ with the Rcpp package are already well <a href="http://dirk.eddelbuettel.com/papers/useR2014_keynote.pdf">widely documented</a>, however, every change to the utility function would require changes to code in C++, not something your trained choice modeller should be spending thier time on.</p>
+<p>This is where approaches in R fall short. The speedups possible by coding inner loops using C++ with the Rcpp package are already well <a href="https://dirk.eddelbuettel.com/papers/useR2014_keynote.pdf">widely documented</a>, however, every change to the utility function would require changes to code in C++, not something your trained choice modeller should be spending thier time on.</p>
 </div>
 <div id="aim" class="section level2">
 <h2>Aim</h2>
@@ -260,11 +298,11 @@ curl -L -o ~/.R/Makevars https://git.io/Je22d</code></pre>
 <h1>Defining a model</h1>
 <p>To both simplify the transformation of the utility functions into C++ code and aid the readability of the scripts, a small amount of syntax has been introduced:</p>
 <ul>
-<li>Variables from the dataset must be prefixed with a $,</li>
-<li>coefficients with a @</li>
-<li>Every line must end with a ;</li>
-<li>Intermediate variables that are calculated don’t get prefixed by anything</li>
-<li>The utility functions are prefixed by U_. “U_bus” or “U_4” are valid, but U_geer.erg is not.</li>
+<li><p>Variables from the dataset must be prefixed with a $,</p></li>
+<li><p>coefficients with a @</p></li>
+<li><p>Every line must end with a ;</p></li>
+<li><p>Intermediate variables that are calculated don’t get prefixed by anything</p></li>
+<li><p>The utility functions are prefixed by U_. “U_bus” or “U_4” are valid, but U_geer.erg is not.</p></li>
 <li><p>Draws are prefixed by “draw”. If you pass nDraws into the estimate function, a suitable set of halton draws will be generated automatically. If you pass in a draws matrix, it needs to be large enough. there is a helper function to do this: <code>mixl::create_halton_draws(Nindividuals, Ndraws, draw_dimensions)</code></p></li>
 <li><p>For powers, you need to use pow (x,y) instead of x^y</p></li>
 </ul>
@@ -336,7 +374,7 @@ p_choice = p_choice + (1/num_obs)*log(p_indic_total);</code></pre>
 <p><code>dnorm(x, mean, sd)</code></p>
 <p>in the utility script, one must write</p>
 <p><code>R::dnorm(x, mean, sd, 0);</code></p>
-<p>For a list of distributions which can be used, please refer to the <a href="http://dirk.eddelbuettel.com/code/rcpp/html/namespaceR.html">Rcpp documentation</a></p>
+<p>For a list of distributions which can be used, please refer to the <a href="https://dirk.eddelbuettel.com/code/rcpp/html/namespaceR.html">Rcpp documentation</a></p>
 </div>
 </div>
 </div>
