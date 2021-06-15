@@ -1,9 +1,10 @@
 #include <Rcpp.h>
 
+!===MIXED_MNL===!
+
 #ifdef _OPENMP
   #include <omp.h>
 #endif
-
 #include "mixl/utility_function.h"
 
 using Rcpp::DataFrame;
@@ -16,11 +17,12 @@ using Rcpp::stop;
 // [[Rcpp::export]]
 NumericMatrix predict(NumericVector betas, DataFrame data,
                       int Nindividuals, NumericMatrix availabilities,
-                      int num_threads=1) {
-  #ifdef _OPENMP
-    omp_set_num_threads(num_threads);
-  #endif
-    
+                      Nullable<NumericMatrix> nullableDraws, int nDraws, int num_threads=1) {
+  
+#ifdef _OPENMP
+  omp_set_num_threads(num_threads);
+#endif
+  
   const int PRE_COLS = 4;
   
   int nCols = PRE_COLS + !===utility_length===!;
@@ -41,7 +43,12 @@ NumericMatrix predict(NumericVector betas, DataFrame data,
   
   colnames(P) = colnames1;
   
-  UF_args v(data, Nindividuals, availabilities, P);
+  NumericMatrix draws;
+  if (nullableDraws.isNotNull()) {
+    draws = nullableDraws.get();
+  }
+  
+  UF_args v(data, Nindividuals, availabilities, draws, nDraws, NULL, P, false);
   
   std::fill(v.P.begin(), v.P.end(), 0);
   
@@ -76,21 +83,27 @@ NumericMatrix predict(NumericVector betas, DataFrame data,
     
     int individual_index = row_ids[i]-1; //indexes should be for c, ie. start at 0
     //Rcpp::Rcout << "indv: " << individual_index << std::endl;
-    
-    std::fill(std::begin(utilities), std::end(utilities), 0.0);
-    
-    /////////////////////////
-    
-    !===draw_and_utility_declarations===!
+    for (int d=0; d<v.nDraws; d++) {
+      
+      #ifdef _MIXED_MNL
+        int draw_index = individual_index * v.nDraws + d; //drawsrep give the index of the draw, based on id, which we dont want to carry in here.
+        NumericMatrix::ConstRow draw = v.draws(draw_index, _);
+      #endif
+      
+      std::fill(std::begin(utilities), std::end(utilities), 0.0);
       
       /////////////////////////
       
-      //dont edit beflow this line
-      for (unsigned k=0; k < utilities.size(); ++k) {
-        utilities[k] = std::min(700.0, std::max(-700.0, utilities[k])); //trip utilities to +- 700 for compuational reasons
-        utilities[k] = exp(utilities[k]); //take the exponential of each utility
-      }
-      
+      !===draw_and_utility_declarations===!
+        
+        /////////////////////////
+        
+        //dont edit beflow this line
+        for (unsigned k=0; k < utilities.size(); ++k) {
+          utilities[k] = std::min(700.0, std::max(-700.0, utilities[k])); //trip utilities to +- 700 for compuational reasons
+          utilities[k] = exp(utilities[k]); //take the exponential of each utility
+        }
+        
       NumericMatrix::ConstRow  choices_avail = v.availabilities( i , _ );
       
       for (unsigned k=0; k < utilities.size(); ++k) {
@@ -98,17 +111,22 @@ NumericMatrix predict(NumericVector betas, DataFrame data,
       }
       
       double sum_utilities = utilities.sum();
+      std::valarray<double> probabilities = (utilities / sum_utilities);
       
-      std::valarray<double> probabilities = utilities / sum_utilities;
-        
       P(i, 0) = i;
       P(i, 1) = individual_index;
       P(i, 2) = choice[i];
-      P(i, 3) = probabilities[choice[i]-1];
+      P(i, 3) += probabilities[choice[i]-1];
       for (unsigned k=0; k < utilities.size(); ++k) {
-        P(i, PRE_COLS + k) = probabilities[k];
+        P(i, PRE_COLS + k) += probabilities[k];
       } 
       
+    }
+    
+    P(i, 3) /= v.nDraws;
+    for (unsigned k=0; k < utilities.size(); ++k) {
+      P(i, PRE_COLS + k) /= v.nDraws;
+    } 
     
   }
   

@@ -1,10 +1,13 @@
 #include <Rcpp.h>
 
+!===MIXED_MNL===!
+
 #ifdef _OPENMP
   #include <omp.h>
 #endif
 #include "mixl/utility_function.h"
 
+using Rcpp::RObject;
 using Rcpp::DataFrame;
 using Rcpp::NumericMatrix;
 using Rcpp::NumericVector;
@@ -15,19 +18,23 @@ using Rcpp::stop;
 // [[Rcpp::export]]
 NumericVector logLik(NumericVector betas, DataFrame data,
                      int Nindividuals, NumericMatrix availabilities,
-                     NumericMatrix draws, int nDraws,
-                     NumericMatrix P, int num_threads=1, bool p_indices=false) {
+                     Nullable<NumericMatrix> nullableDraws, int nDraws,
+                     NumericMatrix P, NumericVector weights, int num_threads=1, bool p_indices=false) {
   
   #ifdef _OPENMP
     omp_set_num_threads(num_threads);
   #endif  
-  
-  UF_args2 v(data, Nindividuals, availabilities, draws, nDraws, P, p_indices);
+    
+  NumericMatrix draws;
+  if (nullableDraws.isNotNull()) {
+    draws = nullableDraws.get();
+  }
+    
+  UF_args v(data, Nindividuals, availabilities, draws, nDraws, weights, P, p_indices);
   
   NumericVector LL(v.Nindividuals);
   std::fill(v.P.begin(), v.P.end(), 0);
   
-  //Rcpp::Rcout << "running utility function"<<  std::endl;
   //double begin = omp_get_wtime();
   
   utilityFunction(betas, v);
@@ -46,16 +53,6 @@ NumericVector logLik(NumericVector betas, DataFrame data,
     LL[i] = log(s) - lognDraws;
     
   }
-  
-  //double end = omp_get_wtime();
-  //double elapsed_secs = double(end - begin) * 1000;
-  /*  
-  #pragma omp parallel
-  {
-  #pragma omp single
-    Rcpp::Rcout << std::setprecision(3) << elapsed_secs << " ms on " << omp_get_num_threads() << " threads" << std::endl;
-  }
-  */
 
 return LL;
 }
@@ -64,7 +61,7 @@ return LL;
 //or - through r, check the names in the utility function, that they are in the data, and return error if not. Then desugarise and compile
 //need to distinquish between betas, random-coeefs and parameters
 
-void utilityFunction(NumericVector betas, UF_args2& v)
+void utilityFunction(NumericVector betas, UF_args& v)
 {
   
   if (!(v.data.containsElementNamed("ID") && v.data.containsElementNamed("CHOICE"))) {
@@ -102,10 +99,12 @@ void utilityFunction(NumericVector betas, UF_args2& v)
     int individual_index = row_ids[i]-1; //indexes should be for c, ie. start at 0
     //Rcpp::Rcout << "indv: " << individual_index << std::endl;
     for (int d=0; d<v.nDraws; d++) {
-      
-      int draw_index = individual_index * v.nDraws + d; //drawsrep give the index of the draw, based on id, which we dont want to carry in here.
-      NumericMatrix::ConstRow draw = v.draws(draw_index, _);
-      
+
+      #ifdef _MIXED_MNL
+        int draw_index = individual_index * v.nDraws + d; //drawsrep give the index of the draw, based on id, which we dont want to carry in here.
+        NumericMatrix::ConstRow draw = v.draws(draw_index, _);
+      #endif
+        
       std::fill(std::begin(utilities), std::end(utilities), 0.0);
       
       /////////////////////////
@@ -128,12 +127,13 @@ void utilityFunction(NumericVector betas, UF_args2& v)
         sum_utilities += utilities[k] * choices_avail[k];
       }
       
-      double log_p_choice = log(chosen_utility / sum_utilities);
+      double log_p_choice = log((chosen_utility / sum_utilities))  * v.weights[i];
       
       if (v.include_probability_indices){
+        
         double p_indic_total = 0;
         !===prob_indicator_sum===!
-        log_p_choice += (1/count[i])*log(p_indic_total);
+        log_p_choice += (1/count[i]) * log(p_indic_total) * v.weights[i];
       }
       
       #pragma omp atomic 

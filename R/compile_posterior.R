@@ -10,28 +10,22 @@
 #' @example R/examples/posteriors.R
 #' 
 #' @export 
-posteriors <- function(model, indiv_data=NULL, code_output_file=NULL) {
+posteriors <- function(model, indiv_data, code_output_file=NULL) {
   
   data_cols <- extract_var(paste(model$rnd_equations[,'equation'], collapse="\n"),data_pattern)
   if (length(data_cols) == 0) data_cols <- NULL
   
-  if (missing(indiv_data) | is.null(indiv_data)) {
+  if (missing(indiv_data) || is.null(indiv_data)) {
     indiv_data <- extract_indiv_data(model$data, data_cols)
   }
   
-  #handle basic mnl case without and draws
-  if(!model$is_mixed | (!is.null(model$nDraws) & model$nDraws == 0)) {
-    f <- compile_posterior_function(model$rnd_equations, names(model$estimate), FALSE, code_output_file)
-    
-    f(model$estimate, model$probabilities, model$Nindividuals, indiv_data)
+  nDraws = ifelse(is.null(model$nDraws), 1, model$nDraws)
+  
+  f <- compile_posterior_function(model$rnd_equations, names(model$estimate), model$is_mixed, code_output_file)
 
-  } else { 
-    f <- compile_posterior_function(model$rnd_equations, names(model$estimate), TRUE, code_output_file)
-    
-    f(model$estimate, model$probabilities,
-      model$Nindividuals, indiv_data,
-      model$draws, model$nDraws)
-  }
+  f(model$estimate, model$probabilities,
+    model$Nindividuals, indiv_data,
+    model$draws, nDraws)
 }
 
 
@@ -47,11 +41,7 @@ parse_equations <- function(utility_script) {
 compile_posterior_function <- function(rnd_equations, betas, is_mixed, output_file=NULL) {
   
   #posterior_template <- readr::read_file("inst/include/mixl/cpp_posteriors.cpp")
-  if (is_mixed) {
-    template_filename <- "cpp_posteriors.cpp"
-  } else {
-    template_filename <- "cpp_mnl_posteriors.cpp"
-  }
+  template_filename <- "posteriors.cpp"
   
   posterior_template <- readr::read_file(system.file("include", "mixl", template_filename, package = "mixl"))
   
@@ -76,6 +66,8 @@ compile_posterior_function <- function(rnd_equations, betas, is_mixed, output_fi
   col_names <- paste0("colnames1[i++] = \"", names, "\";", collapse = "\n")
   
   random_paramters <- (paste0("indiv_B_means(i, rnd_idx++) += probabilities(i,d) * (", equations, ");", collapse="\n"))
+  
+  MIXED_MNL = ifelse(is_mixed, '#define _MIXED_MNL 1', '')
                        
   code <- stringr::str_glue(posterior_template, .open="!===", .close="===!")
   
