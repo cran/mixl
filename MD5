@@ -1,4 +1,4 @@
-c23e29ccb250dd6a8892c4a3b1d507e5 *DESCRIPTION
+a0fa8985179b2d518574a8a7f96985cb *DESCRIPTION
 12b47cc76e1d7f0f5eed202632b14b46 *NAMESPACE
 133343a4d1ea264f4aa7f1f7eb5aaa01 *R/check_inputs.R
 59908b72115405d2ad9aa213931e1e3a *R/compile_posterior.R
@@ -22,10 +22,10 @@ ee25da3277588948012030f7feddebd0 *R/utilities.R
 4a4dccedcf718fbf4f41f47124f273dd *build/vignette.rds
 46750e778a5cdb4d65c347f8e43df623 *inst/doc/user-guide.R
 7c415a8588704f28571ff5add5cbb64d *inst/doc/user-guide.Rmd
-c2dcdd2d08e4f31c2760b28677216769 *inst/doc/user-guide.html
+8607c93d2a54e4606f321e2f572da1ba *inst/doc/user-guide.html
 4ebf77fd49b8aea56f4a6f032bad2914 *inst/include/MIXL_OPENMP_FLAG
 6bd738be3520219310de61a340872752 *inst/include/MIXL_OPENMP_FLAG.in
-0ad7a0cf7ef12982f537bb82d764b71a *inst/include/mixl/loglik.cpp
+c1da7d12d89fb3c5efd1b36e285c3db7 *inst/include/mixl/loglik.cpp
 d521a435ce74d075ffd74f96eb19d4cc *inst/include/mixl/posteriors.cpp
 23ec22d664bd6c6f83c90d32e325ddb8 *inst/include/mixl/predict.cpp
 19f7cd2d4981253a38d3310f817510d9 *inst/include/mixl/utilities.cpp
