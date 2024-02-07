@@ -1,5 +1,5 @@
-0f62ee16c1e0782b7c33f97ab6450d17 *DESCRIPTION
-12b47cc76e1d7f0f5eed202632b14b46 *NAMESPACE
+0696f9f2c0e16bacc85b173b93acf93f *DESCRIPTION
+5c6a911924d476ed9f828ac284bbe038 *NAMESPACE
 133343a4d1ea264f4aa7f1f7eb5aaa01 *R/check_inputs.R
 59908b72115405d2ad9aa213931e1e3a *R/compile_posterior.R
 2dba5c27c20f059a090664e6b29a5ab9 *R/compiler.R
@@ -14,16 +14,16 @@ f9afad9ed21deb154d9c71c874a0672f *R/examples/specify_model.R
 098195560c9a5ef23be68ec460bab7f3 *R/examples/utilities.R
 eceeaeaa862ee7ac68b0d173b74c45f5 *R/helper_functions.R
 5ef2d2eb61bdeffa1a8483825497bf48 *R/mle.R
-ce28ee96282d976fd5d2d224d0e6c658 *R/model_stats.R
+67b101bde68711ce5832588a0e68b114 *R/model_stats.R
 98fb8a68fc2d6fcead96ab484fac82a4 *R/preprocessor.R
 84b35473f5520cc7556177618ba7eabb *R/probabilities.R
 a05d61af114667290cab146ea1291995 *R/tex.R
 ee25da3277588948012030f7feddebd0 *R/utilities.R
-4a4dccedcf718fbf4f41f47124f273dd *build/vignette.rds
+8f8b5a124b7c0a2857df9fb2c0e8253c *build/vignette.rds
 46750e778a5cdb4d65c347f8e43df623 *inst/doc/user-guide.R
-7c415a8588704f28571ff5add5cbb64d *inst/doc/user-guide.Rmd
-06a267abae1d64bb9e0f2593eac7be38 *inst/doc/user-guide.html
-4ebf77fd49b8aea56f4a6f032bad2914 *inst/include/MIXL_OPENMP_FLAG
+34c523cc9dc151c99bc77d0cc71917bd *inst/doc/user-guide.Rmd
+cca78b5861a7c6ceaae9f7b43c3eed1b *inst/doc/user-guide.html
+68b329da9893e34099c7d8ad5cb9c940 *inst/include/MIXL_OPENMP_FLAG
 6bd738be3520219310de61a340872752 *inst/include/MIXL_OPENMP_FLAG.in
 1da2687f192fed707d46bef8b41fee57 *inst/include/mixl/loglik.cpp
 d521a435ce74d075ffd74f96eb19d4cc *inst/include/mixl/posteriors.cpp
@@ -39,7 +39,7 @@ cbb43e49ce648d91a8fef09c01140dc0 *man/compileUtilityFunction.Rd
 07753eedafc9fa65ca7cbca54ff3c969 *man/extract_av_cols.Rd
 46dbb1bd489e2b1726d9c40a9f5bfc41 *man/extract_indiv_data.Rd
 a01192bbc87b90ecd1493025b41e3a97 *man/generate_default_availabilities.Rd
-a8ccb626f5b111de9294821bf37cdb82 *man/mixl-package.Rd
+03c8f6efe7d8b48114eed2a76531076d *man/mixl-package.Rd
 1926ab7f2e24d6a86740e7de23167cba *man/posteriors.Rd
 f9554c0608719fa6e94eb9028f918380 *man/print.mixl.Rd
 8dafe4b8cabef2c7aa025b43770013ed *man/print.summary.mixl.Rd
@@ -48,6 +48,7 @@ f314638bb7b6ca7ae5157bdcb191ae71 *man/specify_model.Rd
 da57c7c3eab081e29ce5456d6d149f61 *man/summary.mixl.Rd
 378894792765e131f5a5780485e2e011 *man/summary_tex.Rd
 7b11de0792b9150d6512e9d557828e4e *man/utilities.Rd
+1dc6f186777cbe1523135a0ca495fb67 *man/vcov.mixl.Rd
 06bd9a775d19012af5b59633c06148cc *src/Makefile
 8d26a51a998cb1345de9af3b2d1b273e *src/Makefile.win
 e8755aef786eda1c0a7d71ab8ad48c2b *tests/testthat.R
@@ -61,5 +62,5 @@ df421fd357e1f1cc2b8e5a9e9a9005e8 *tests/testthat/test_variable_identification.R
 2e2a6c8772e7bcacd255553a6a67c1cd *tests/testthat/test_variable_replacement.R
 2dc310d865d95902341407ac4eb4e59b *tests/testthat/test_variable_validation.R
 d41d8cd98f00b204e9800998ecf8427e *tests/testthat/test_weights.R
-7c415a8588704f28571ff5add5cbb64d *vignettes/user-guide.Rmd
+34c523cc9dc151c99bc77d0cc71917bd *vignettes/user-guide.Rmd
 6600ac2727a456d2222e9d25cd9dc73c *vignettes/user-guide.md

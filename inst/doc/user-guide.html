@@ -12,35 +12,33 @@
 
 <meta name="author" content="Joe Molloy" />
 
-<meta name="date" content="2021-12-08" />
+<meta name="date" content="2024-02-06" />
 
 <title>Mixl User Guide</title>
 
-<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
-
-document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
   }
 });
 </script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
 
 
 
@@ -241,21 +239,46 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Mixl User Guide</h1>
 <h4 class="author">Joe Molloy</h4>
-<h4 class="date">2021-12-08</h4>
+<h4 class="date">2024-02-06</h4>
 
 
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>The <em>mixl</em> package presents a new approach to estimating complex choice models which is both many times faster than existing approaches, and simplier to use. The interface remains in R, while the loglikelihood function is compiled into to high performance C++ code in the background. Users need no knowledge of C++, and can specify thier utility functions and random variables as they would on paper. Where the appropriate parallel computing resources are available (on linux machines), the loglikelihood estimation can be easily sped up by simply specifying the number of cores available.</p>
-<p>##Installation Under the hood, the <em>mixl</em> package compiles a loglikelihood function based on your model specification. This requires a c++ compiler. Somewhat complicatedly, the correct compiler (for C++ with openMP support) is only available by defauly on linux machines. On windows and OSX machines, <em>mixl</em> will installed successfully, but attempts to specify a model will fail unless the following steps are taken.</p>
+<p>The <em>mixl</em> package presents a new approach to estimating
+complex choice models which is both many times faster than existing
+approaches, and simplier to use. The interface remains in R, while the
+loglikelihood function is compiled into to high performance C++ code in
+the background. Users need no knowledge of C++, and can specify thier
+utility functions and random variables as they would on paper. Where the
+appropriate parallel computing resources are available (on linux
+machines), the loglikelihood estimation can be easily sped up by simply
+specifying the number of cores available.</p>
+<p>##Installation Under the hood, the <em>mixl</em> package compiles a
+loglikelihood function based on your model specification. This requires
+a c++ compiler. Somewhat complicatedly, the correct compiler (for C++
+with openMP support) is only available by defauly on linux machines. On
+windows and OSX machines, <em>mixl</em> will installed successfully, but
+attempts to specify a model will fail unless the following steps are
+taken.</p>
 <div id="windows" class="section level3">
 <h3>Windows</h3>
-<p>On windows machines, the easiest way is to install Rtools, an official extension for R. As of writing, the Version 4.0 the most recent. It is available here: <a href="https://cran.r-project.org/bin/windows/Rtools/">https://cran.r-project.org/bin/windows/Rtools/</a>. Download and run the installer. The default location (<code>C:/Rtools</code>) is fine.</p>
+<p>On windows machines, the easiest way is to install Rtools, an
+official extension for R. As of writing, the Version 4.0 the most
+recent. It is available here: <a href="https://cran.r-project.org/bin/windows/Rtools/">https://cran.r-project.org/bin/windows/Rtools/</a>.
+Download and run the installer. The default location
+(<code>C:/Rtools</code>) is fine.</p>
 </div>
 <div id="osx-mac" class="section level3">
 <h3>OSX (Mac)</h3>
-<p>On Mac, things are a little more complicated. OSX has a compiler pre-installed. However, the compiler (clang) doesn’t come with openMP enabled. Hence, the <code>specify_model</code> function will fail. The easist way to install a suitable compiler is as follows. Note, these commands require using the Terminal (command line). This can be accessed from the search functionality in OSX, or directly in R Studio itself. The following code assumes that you don’t have a Makevars for your R environment set up already.</p>
+<p>On Mac, things are a little more complicated. OSX has a compiler
+pre-installed. However, the compiler (clang) doesn’t come with openMP
+enabled. Hence, the <code>specify_model</code> function will fail. The
+easist way to install a suitable compiler is as follows. Note, these
+commands require using the Terminal (command line). This can be accessed
+from the search functionality in OSX, or directly in R Studio itself.
+The following code assumes that you don’t have a Makevars for your R
+environment set up already.</p>
 <ul>
 <li>Install <a href="https://brew.sh/">homebrew</a></li>
 <li>In the terminal, run the following commands</li>
@@ -269,42 +292,98 @@ curl -L -o ~/.R/Makevars https://git.io/JtbVr</code></pre>
 </div>
 <div id="motivation" class="section level2">
 <h2>Motivation</h2>
-<p>The development of this package was motivated by the need at the <a href="https://www.ivt.ethz.ch/">Institute for Transport Planning and Systems (IVT)</a> at ETH Zürich to estimate complicated mixed multinomial logit models of time use and travel behaviour. Other approaches, such as <a href="https://biogeme.epfl.ch/">biogeme</a> and other R implementations were found to be very memory intensive when a large number of random draws were needed.</p>
-<p>Additionally, we found that the learning curve for some implementations was very steep, and changes to model specifications involved understanding of the underlying code base, on top of random utility and choice modeling fundamentals.</p>
-<p>In R, until now there has been two approaches for specifying utility functions. The first, popularised by the mlogit package uses the R formula notation to allow succint yet expressive definition of a utility function. This approach falls short however, when the user wants to specify multiple utility functions, which is standard practice for more complicated models. This approach also doesn’t handle complicated mixed models well. The alternative involves specifying the utility functions as operations on datatable columns, which is much more flexible, but inefficient to run, and error prone to write.</p>
-<p>From a technical perspective, the utility functions can be seen as the ‘inner loop’ of the Maximum likelihood Estimation (mle) operation. If there are p parameters, then for every iteration of the mle the utility functions are calculated at least 2p+1 times. It follows that any attempt at high performance mnl estimation should focus here.</p>
-<p>This is where approaches in R fall short. The speedups possible by coding inner loops using C++ with the Rcpp package are already well <a href="https://dirk.eddelbuettel.com/papers/useR2014_keynote.pdf">widely documented</a>, however, every change to the utility function would require changes to code in C++, not something your trained choice modeller should be spending thier time on.</p>
+<p>The development of this package was motivated by the need at the <a href="https://www.ivt.ethz.ch/">Institute for Transport Planning and
+Systems (IVT)</a> at ETH Zürich to estimate complicated mixed
+multinomial logit models of time use and travel behaviour. Other
+approaches, such as <a href="https://github.com/michelbierlaire/biogeme">biogeme</a> and other
+R implementations were found to be very memory intensive when a large
+number of random draws were needed.</p>
+<p>Additionally, we found that the learning curve for some
+implementations was very steep, and changes to model specifications
+involved understanding of the underlying code base, on top of random
+utility and choice modeling fundamentals.</p>
+<p>In R, until now there has been two approaches for specifying utility
+functions. The first, popularised by the mlogit package uses the R
+formula notation to allow succint yet expressive definition of a utility
+function. This approach falls short however, when the user wants to
+specify multiple utility functions, which is standard practice for more
+complicated models. This approach also doesn’t handle complicated mixed
+models well. The alternative involves specifying the utility functions
+as operations on datatable columns, which is much more flexible, but
+inefficient to run, and error prone to write.</p>
+<p>From a technical perspective, the utility functions can be seen as
+the ‘inner loop’ of the Maximum likelihood Estimation (mle) operation.
+If there are p parameters, then for every iteration of the mle the
+utility functions are calculated at least 2p+1 times. It follows that
+any attempt at high performance mnl estimation should focus here.</p>
+<p>This is where approaches in R fall short. The speedups possible by
+coding inner loops using C++ with the Rcpp package are already well <a href="https://dirk.eddelbuettel.com/papers/useR2014_keynote.pdf">widely
+documented</a>, however, every change to the utility function would
+require changes to code in C++, not something your trained choice
+modeller should be spending thier time on.</p>
 </div>
 <div id="aim" class="section level2">
 <h2>Aim</h2>
-<p>Hence, we invisaged a package where one could write utility functions as they would on paper, which could be parsed into C++ and complied ‘behind the scenes’ into a high performant loglikelihood function accessible from R.</p>
-<p>The second goal was to optimise the memory consumption. The straightforward approach is to merge the dataset with the random draw dataset, duplicating every data row by the number of requested random draws. However, this leads to an polynomial increase in the memory required. And is particular inefficient for large panel datasets. However, if the data and random draw datasets are kept separate, then the memory usage is only linear in the number of draws.</p>
-<p>As such, this package, called <em>mixl</em>, allows for advanced choice modelling through an intuitive interface. The number of random draws is no longer limited by the computer memory available. Indeed, we have been able to estimate models with dozens of parameters and 10,000 random draws. Importantly, this performance does not require advanced programming skills from the modeller. models can be speficied as they would be on paper. The code is also parallelised, see section ________ for more details.</p>
+<p>Hence, we invisaged a package where one could write utility functions
+as they would on paper, which could be parsed into C++ and complied
+‘behind the scenes’ into a high performant loglikelihood function
+accessible from R.</p>
+<p>The second goal was to optimise the memory consumption. The
+straightforward approach is to merge the dataset with the random draw
+dataset, duplicating every data row by the number of requested random
+draws. However, this leads to an polynomial increase in the memory
+required. And is particular inefficient for large panel datasets.
+However, if the data and random draw datasets are kept separate, then
+the memory usage is only linear in the number of draws.</p>
+<p>As such, this package, called <em>mixl</em>, allows for advanced
+choice modelling through an intuitive interface. The number of random
+draws is no longer limited by the computer memory available. Indeed, we
+have been able to estimate models with dozens of parameters and 10,000
+random draws. Importantly, this performance does not require advanced
+programming skills from the modeller. models can be speficied as they
+would be on paper. The code is also parallelised, see section ________
+for more details.</p>
 </div>
 </div>
 <div id="defining-a-model" class="section level1">
 <h1>Defining a model</h1>
-<p>To both simplify the transformation of the utility functions into C++ code and aid the readability of the scripts, a small amount of syntax has been introduced:</p>
+<p>To both simplify the transformation of the utility functions into C++
+code and aid the readability of the scripts, a small amount of syntax
+has been introduced:</p>
 <ul>
 <li><p>Variables from the dataset must be prefixed with a $,</p></li>
 <li><p>coefficients with a @</p></li>
 <li><p>Every line must end with a ;</p></li>
-<li><p>Intermediate variables that are calculated don’t get prefixed by anything</p></li>
-<li><p>The utility functions are prefixed by U_. “U_bus” or “U_4” are valid, but U_geer.erg is not.</p></li>
-<li><p>Draws are prefixed by “draw”. If you pass nDraws into the estimate function, a suitable set of halton draws will be generated automatically. If you pass in a draws matrix, it needs to be large enough. there is a helper function to do this: <code>mixl::create_halton_draws(Nindividuals, Ndraws, draw_dimensions)</code></p></li>
+<li><p>Intermediate variables that are calculated don’t get prefixed by
+anything</p></li>
+<li><p>The utility functions are prefixed by U_. “U_bus” or “U_4” are
+valid, but U_geer.erg is not.</p></li>
+<li><p>Draws are prefixed by “draw”. If you pass nDraws into the
+estimate function, a suitable set of halton draws will be generated
+automatically. If you pass in a draws matrix, it needs to be large
+enough. there is a helper function to do this:
+<code>mixl::create_halton_draws(Nindividuals, Ndraws, draw_dimensions)</code></p></li>
 <li><p>For powers, you need to use pow (x,y) instead of x^y</p></li>
 </ul>
 <div id="availabilities" class="section level2">
 <h2>Availabilities</h2>
-<p>The availabilities must to be provided as a matrix of <span class="math inline">\(n*k\)</span> where <span class="math inline">\(n\)</span> is the number of rows in the data, and <span class="math inline">\(k\)</span> is the number of utility functions. The helper functions  and  can help here</p>
+<p>The availabilities must to be provided as a matrix of <span class="math inline">\(n*k\)</span> where <span class="math inline">\(n\)</span> is the number of rows in the data, and
+<span class="math inline">\(k\)</span> is the number of utility
+functions. The helper functions and can help here</p>
 </div>
 <div id="the-mixl-input-file" class="section level2">
 <h2>The mixl input file</h2>
-<p>Below are two sample model definitions to get you started. The package automatically detects mixing, and generates the loglikelihood function appropriately. A simple mnl model, using the Train dataset could look like the following:</p>
+<p>Below are two sample model definitions to get you started. The
+package automatically detects mixing, and generates the loglikelihood
+function appropriately. A simple mnl model, using the Train dataset
+could look like the following:</p>
 <pre><code>U_A =          @B_price * $price_A / 1000 + @B_timeA * $time_A / 60 + @B_change * $change_A; 
 U_B = @ASC_B + @B_price * $price_B / 1000 + @B_timeB * $time_B / 60;</code></pre>
-<p>Here, the coefficients ASC_B, B_price, B_time, B_timeB and B_change would be estimated.</p>
-<p>If we extend this to a simple mixed model, the additional random coefficients SIGMA_B and SIGMA_B2 are estimated. the declaration of ASC_B_RND helps the readability of the utility function:</p>
+<p>Here, the coefficients ASC_B, B_price, B_time, B_timeB and B_change
+would be estimated.</p>
+<p>If we extend this to a simple mixed model, the additional random
+coefficients SIGMA_B and SIGMA_B2 are estimated. the declaration of
+ASC_B_RND helps the readability of the utility function:</p>
 <pre><code>ASC_B_RND = @ASC_B + draw_1 * @SIGMA_B  + draw_2 * @SIGMA_B2;
 
 U_A =             @B_price * $price_A / 1000 + @B_timeA * $time_A / 60 + @B_change * $change_A; 
@@ -312,15 +391,35 @@ U_B = ASC_B_RND + @B_price * $price_B / 1000 + @B_timeB * $time_B / 60;</code></
 </div>
 <div id="input-and-constraints" class="section level2">
 <h2>Input and constraints</h2>
-<p>As clean as this interface is, there are some limits to what the package can handle. The modeller needs to make sure that their dataset has two columns, ID and CHOICE.</p>
+<p>As clean as this interface is, there are some limits to what the
+package can handle. The modeller needs to make sure that their dataset
+has two columns, ID and CHOICE.</p>
 <ul>
-<li>ID is the id of the individual, NOT the choice, and needs to be congurent from <span class="math inline">\(1..n\)</span> where n is the number of individuals.</li>
-<li>For each row in the data, CHOICE must be an integer from <span class="math inline">\(1..k\)</span>, where k is the number of available alternatives.</li>
-<li>A utility function must be specified for each alternative. If none is required, <code>U_x = 1</code> will give a utility of zero.</li>
-<li>The availabilities need to be a numeric matrix of 1 or 0s, with the number of rows equal to number of data rows, and the number of columns equal to the number of alternatives.</li>
+<li>ID is the id of the individual, NOT the choice, and needs to be
+congurent from <span class="math inline">\(1..n\)</span> where n is the
+number of individuals.</li>
+<li>For each row in the data, CHOICE must be an integer from <span class="math inline">\(1..k\)</span>, where k is the number of available
+alternatives.</li>
+<li>A utility function must be specified for each alternative. If none
+is required, <code>U_x = 1</code> will give a utility of zero.</li>
+<li>The availabilities need to be a numeric matrix of 1 or 0s, with the
+number of rows equal to number of data rows, and the number of columns
+equal to the number of alternatives.</li>
 </ul>
-<p>#M maximum simulated likelihood estimation A set choice model generated through this package is estimated using the <code>maximumLikelihood</code> function. It wraps the maxLik procedure from the maxLik package, which then accepts the optimised likelihood function generated from a utility script. The maxLik package is stable and well tested. To improve the covariance estimates, the Hessian function from the numDeriv package, rather than the default from the maxLik package is used. The BFGS (Broyden–Fletcher–Goldfarb–Shanno algorithm) method is used by deafault. This has found to converge faster and more reliably than other methods such as Newton-Rhapson.</p>
-<p>Even for simple MNL models, the numerical gradient of the loglikelihood function is used, as it is envisaged that this package will primarily be used for estimating mixed models, where simulation is necessary due to the use of random draws.</p>
+<p>#M maximum simulated likelihood estimation A set choice model
+generated through this package is estimated using the
+<code>maximumLikelihood</code> function. It wraps the maxLik procedure
+from the maxLik package, which then accepts the optimised likelihood
+function generated from a utility script. The maxLik package is stable
+and well tested. To improve the covariance estimates, the Hessian
+function from the numDeriv package, rather than the default from the
+maxLik package is used. The BFGS (Broyden–Fletcher–Goldfarb–Shanno
+algorithm) method is used by deafault. This has found to converge faster
+and more reliably than other methods such as Newton-Rhapson.</p>
+<p>Even for simple MNL models, the numerical gradient of the
+loglikelihood function is used, as it is envisaged that this package
+will primarily be used for estimating mixed models, where simulation is
+necessary due to the use of random draws.</p>
 </div>
 </div>
 <div id="technical-details" class="section level1">
@@ -338,7 +437,18 @@ U_B = ASC_B_RND + @B_price * $price_B / 1000 + @B_timeB * $time_B / 60;</code></
 </div>
 <div id="openmp-and-parallel-computing" class="section level3">
 <h3>openMP and parallel computing</h3>
-<p>Parallelisation is provided through the <a href="https://www.openmp.org/">openMP</a>. Where this functionality is available (primarily on linux, but it can be enabled on OSX with some effort) the loglikelihood function can be run in parallel with near linear speedups. The parallel performance is largely due to the ‘embarassingly parallel’ nature of the problem. For each observation, only <span class="math inline">\(k\)</span> utilities are calculated, and each observation is independent. The input data, namely the variables, coefficients and random draws are modified during the calculation. This means that the only variable jointly written by each processing core is the output matrix of probabilities. Since the update operation is only an (associative) addition, this operation can be performed atomically, requiring no locking sections of code.</p>
+<p>Parallelisation is provided through the <a href="https://www.openmp.org/">openMP</a>. Where this functionality is
+available (primarily on linux, but it can be enabled on OSX with some
+effort) the loglikelihood function can be run in parallel with near
+linear speedups. The parallel performance is largely due to the
+‘embarassingly parallel’ nature of the problem. For each observation,
+only <span class="math inline">\(k\)</span> utilities are calculated,
+and each observation is independent. The input data, namely the
+variables, coefficients and random draws are modified during the
+calculation. This means that the only variable jointly written by each
+processing core is the output matrix of probabilities. Since the update
+operation is only an (associative) addition, this operation can be
+performed atomically, requiring no locking sections of code.</p>
 </div>
 </div>
 </div>
@@ -346,23 +456,40 @@ U_B = ASC_B_RND + @B_price * $price_B / 1000 + @B_timeB * $time_B / 60;</code></
 <h1>Advanced Topics</h1>
 <div id="probit" class="section level2">
 <h2>Probit</h2>
-<p>Probit models are currently not supported, though that is planned for the near future.</p>
+<p>Probit models are currently not supported, though that is planned for
+the near future.</p>
 </div>
 <div id="hybrid-choice" class="section level2">
 <h2>Hybrid Choice</h2>
-<p>The package also supports hybrid choice models. Declared variables with the prefix <code>P_indic_</code> will be considered as probability indicators for each observation. The compiler detects these automatically, and automatically includes the code to include the product of the probability indicators in the loglikelihood. The model estimation will return both the choice loglikelihood and the model loglikelihood. In psuedo code, the inclusion of the indicators looks like this:</p>
+<p>The package also supports hybrid choice models. Declared variables
+with the prefix <code>P_indic_</code> will be considered as probability
+indicators for each observation. The compiler detects these
+automatically, and automatically includes the code to include the
+product of the probability indicators in the loglikelihood. The model
+estimation will return both the choice loglikelihood and the model
+loglikelihood. In psuedo code, the inclusion of the indicators looks
+like this:</p>
 <pre><code>p_choice = log(chosen_utility / sum(utilities) );
 p_indic_total = P_indic_1 * P_indic_2 * .... P_indic_k;
 
 p_choice = p_choice + (1/num_obs)*log(p_indic_total);</code></pre>
-<p>One extra column is required in the dataset to enable hybrid choice, namely a <code>count</code> column with the total number of observations for the individual making the choice.</p>
+<p>One extra column is required in the dataset to enable hybrid choice,
+namely a <code>count</code> column with the total number of observations
+for the individual making the choice.</p>
 <div id="using-probability-distributions" class="section level3">
 <h3>Using probability distributions</h3>
-<p>To give maximum flexibility to the user, there are no restrictions on which probability distributions can be used in the probability indicators. In R, it is common to use functions such as <code>rnorm</code> or <code>dnorm</code> from the stats package. These can still be used, but the syntax is a little different, as they must be called from the C++ code. hence, where in R one would call the following</p>
+<p>To give maximum flexibility to the user, there are no restrictions on
+which probability distributions can be used in the probability
+indicators. In R, it is common to use functions such as
+<code>rnorm</code> or <code>dnorm</code> from the stats package. These
+can still be used, but the syntax is a little different, as they must be
+called from the C++ code. hence, where in R one would call the
+following</p>
 <p><code>dnorm(x, mean, sd)</code></p>
 <p>in the utility script, one must write</p>
 <p><code>R::dnorm(x, mean, sd, 0);</code></p>
-<p>For a list of distributions which can be used, please refer to the <a href="https://dirk.eddelbuettel.com/code/rcpp/html/namespaceR.html">Rcpp documentation</a></p>
+<p>For a list of distributions which can be used, please refer to the <a href="https://dirk.eddelbuettel.com/code/rcpp/html/namespaceR.html">Rcpp
+documentation</a></p>
 </div>
 </div>
 </div>

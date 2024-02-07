@@ -114,7 +114,7 @@ print.summary.mixl <- function (x, ...) {
   
   with(model_output, {
     cat("Model diagnosis:", message,"\n")
-    cat("Runtime: ", format(unclass(model$runtime), digits = 3), " ", attr(model$runtime, "units"), "\n\n", sep = "")
+    cat("Runtime: ", format(unclass(runtime), digits = 3), " ", attr(runtime, "units"), "\n\n", sep = "")
     cat("Number of decision makers:", Nindividuals,"\n")
     cat("Number of observations:", choicetasks,"\n\n")
     if (is_mixed) {
@@ -159,6 +159,17 @@ print.mixl <- function (x, ...) {
     print(model_output, ...)
 }
 
+#' Calculates the Variance-Covariance Matrix of the mixl summary 
+#' 
+#' [vcov()] is an S3 method for the summary.mixl class, giving the Variance-Covariance Matrix 
+#' 
+#' @param object The summary to print.
+#' @param eigentol The tolerance value.
+#' @param ... Options to pass to print.
+#' 
+#' @example R/examples/model_stats.R
+#' 
+#' @export
 vcov.mixl <- function (object, eigentol = 1e-12, ...) 
 {
   if (!is.null(object$varcovar)) 
